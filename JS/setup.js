@@ -1,13 +1,24 @@
+// Profile
+let profile = {
+  'name':'Goalienator',
+  'team':'Puckinator',
+  'jerseyNumber':'85',
+  'youtube':'',
+  'twitter':'',
+  'instagram':'',
+  'facebook':''
+}
+
 // Location array for... locations? Duh.
 let locations = [
-  { city: "Langley City", name: "Canlan Ice Sports - Twin Rinks" },
-  { city: "Abbotsford", name: "The Rinks at Summit Centre" },
-  { city: "Halifax", name: "Spryfield Lions Rink" },
-  { city: "Richmond Hill", name: "National Training Rinks" },
-  { city: "Chilliwack", name: "Example Rink Name Longer" }
+  { city: "Langley City", rink: "Canlan Ice Sports - Twin Rinks" },
+  { city: "Abbotsford", rink: "The Rinks at Summit Centre" },
+  { city: "Halifax", rink: "Spryfield Lions Rink" },
+  { city: "Richmond Hill", rink: "National Training Rinks" },
+  { city: "Chilliwack", rink: "Example Rink Name Longer" }
 ];
 
-
+// Sample team array for dummy data
 let teams = [
   'The Eh Team',
   'Nifties',
@@ -43,4 +54,7 @@ let generateGames = function(gameAmount) {
 };
 
 // Create dummy data
+generateProfile();
+generateSearchPanel();
+gameBox();
 generateGames(15);

@@ -12,7 +12,9 @@ let createGameItem = function(game) {
   gameLocation.className = "item location";
 
   let gameDate = document.createElement("p");
-  gameDate.textContent = `${moment(game.date).format("MMM/DDD/Y")}, ${game.location.name} | ${game.location.city}`;
+  gameDate.textContent = `${moment(game.date).format("MMM/DDD/Y")}, ${
+    game.location.rink
+  }`;
   gameLocation.appendChild(gameDate);
 
   let gameShots = document.createElement("div");
@@ -39,6 +41,10 @@ let createGameItem = function(game) {
   sa_desc.textContent = "save percentage";
   gameSA.appendChild(sa_desc);
 
+  itemHolder.addEventListener("click", function(e) {
+    document.execCommand("copy");
+  });
+
   itemHolder.appendChild(gameLocation);
   itemHolder.appendChild(gameShots);
   itemHolder.appendChild(gameGoals);
@@ -46,7 +52,22 @@ let createGameItem = function(game) {
   return itemHolder;
 };
 
-let generateNavigation = () => {
+// Generate profile for the side box.
+let generateProfile = () => {
+  let profileContainer = document.getElementById("profile-field");
+  let profileUL = document.createElement("ul");
+
+
+  profileContainer.appendChild(profileUL);
+  for (let i = 0; i < Object.keys(profile).length; i++) {
+    let profileField = document.createElement("li");
+    profileField.textContent = profile['name'];
+    profileUL.appendChild(profileField);
+  }
+};
+
+// Generate search panel
+let generateSearchPanel = () => {
   let navigation_holder = document.getElementById("search_container");
   let search_holder = document.createElement("div");
   let search = document.createElement("input");
@@ -82,6 +103,7 @@ let generateNavigation = () => {
   navigation_holder.appendChild(search_holder);
 };
 
+// Create and display "X games found" element.
 let gameBox = () => {
   let container = document.getElementById("search_container");
   let gameDisplay = document.createElement("div");
@@ -90,6 +112,7 @@ let gameBox = () => {
   container.appendChild(gameDisplay);
 };
 
+// Filter games by search filters.
 let filterGames = () => {
   if (filters.filterType === "city") {
     let filteredGames = games.filter(function(game) {
@@ -98,18 +121,14 @@ let filterGames = () => {
       return name.includes(search);
     });
     return filteredGames;
-  } 
-  
-  else if (filters.filterType === "rink") {
+  } else if (filters.filterType === "rink") {
     let filteredGames = games.filter(function(game) {
-      let name = game.location.name.toLowerCase();
+      let name = game.location.rink.toLowerCase();
       let search = filters.searchString.toLowerCase();
       return name.includes(search);
     });
     return filteredGames;
-  } 
-  
-  else {
+  } else {
     let filteredGames = games.filter(function(game) {
       let name = game.teams.toLowerCase();
       let search = filters.searchString.toLowerCase();
@@ -119,5 +138,16 @@ let filterGames = () => {
   }
 };
 
-generateNavigation();
-gameBox();
+// Render games to website
+let renderItems = () => {
+    let contentPage = document.getElementById('games-data');
+    contentPage.innerHTML = null;
+    let filteredGames = filterGames();
+
+    filteredGames.forEach(function(item) {
+        let gameItem = createGameItem(item);
+        contentPage.appendChild(gameItem);
+    });
+
+    document.getElementById('gameTotalStats').textContent = `${filteredGames.length} games found`;
+};
