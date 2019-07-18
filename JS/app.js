@@ -1,6 +1,3 @@
-let filters = {
-    'searchString':'',
-    'filterType':'city'
-}
+let getGames = games;
 
 renderItems();

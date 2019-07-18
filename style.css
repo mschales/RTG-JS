@@ -38,9 +38,13 @@ body {
     border-radius: 8px;
     background-color: #020202;
     border: 2px solid rgb(39, 39, 39);
+    order: 0;
 }
 
 .search-field {
+    background-color: rgb(42, 50, 73);
+    border: 1px solid #6e6e6e;
+    color: #fefefe;
     padding-left: 9px;
     min-width: 264px;
     min-height: 27px;
@@ -49,7 +53,7 @@ body {
 }
 
 .gameTotalStats {
-    background-color: rgb(27, 27, 27);
+    background-color: rgb(36, 43, 70);
     border: 1px solid rgb(68, 68, 68);
     font-size: 14px;
     min-height: 27px;
@@ -62,11 +66,14 @@ body {
 }
 
 select {
-    height: 27px;
-    line-height: 27px;
+    color: #fefefe;
+    background-color: rgb(42, 50, 73);
+    border: 1px solid #6e6e6e;
+    height: 33px;
+    line-height: 33px;
     margin-left: 5px;
     border-radius: 4px;
-    min-width: 96px;
+    min-width: 136px;
 }
 
 option {
@@ -75,8 +82,44 @@ option {
 }
 
 
+/* Season Panel */
+
+.season_stat_panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    margin-bottom: 9px;
+    padding: 9px;
+    border-radius: 8px;
+    background-color: #020202;
+    border: 2px solid rgb(39, 39, 39);
+}
+
+.season_stat_panel span {
+    background-color: rgb(37, 40, 51);
+    border: 1px solid rgb(68, 68, 68);
+    font-size: 14px;
+    min-height: 27px;
+    line-height: 27px;
+    border-radius: 4px;
+    padding-left: 9px;
+    padding-right: 9px;
+    color: #fefefe;
+    text-transform: uppercase;
+    margin-left: 15px;
+}
+
+.season_name {
+    background-color: rgb(24, 40, 93) !important;
+}
+
 /* Profile */
+
 .profile {
+    font-size: 16px;
+    color: rgb(201, 201, 201);
     flex-grow: 4;
     margin-right: 15px;
 }
