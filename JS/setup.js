@@ -5,7 +5,7 @@ let gameFilters = {
 
 // Profile
 let profile = {
-  'name':'Sam Mantini',
+  'name':'Example Goalie',
   'team':'Hockey City',
   'jerseyNumber':'85',
   'youtube':'',

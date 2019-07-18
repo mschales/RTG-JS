@@ -161,7 +161,7 @@ let generateProfile = () => {
   profileContainer.appendChild(profileUL);
 
   let profileName = document.createElement("li");
-  profileName.textContent = profile.name;
+  profileName.textContent = `${profile.name} (#${profile.jerseyNumber})`;
   profileUL.appendChild(profileName);
 
   let profileTeam = document.createElement("li");
