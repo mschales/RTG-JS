@@ -1,6 +1,6 @@
 let gameFilters = {
   'searchString': '',
-  'seasonFilter': 'Summer 2017'
+  'seasonFilter': ''
 }
 
 // Profile

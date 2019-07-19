@@ -56,9 +56,13 @@ let seasonStats = function(getGames) {
   let seasonShots = document.createElement('span');
   let seasonSPHolder = document.createElement('span');
   let seasonGaaHolder = document.createElement('span');
+  let seasonStaticsHolder = document.createElement('span');
 
   seasonName.className = 'season_name';
   seasonName.textContent = `${getSeason} Statistics`;
+  seasonName.addEventListener('click', () =>  {
+    renderItems();
+  });
 
   seasonGoals.textContent = `${getGoals()} goals allowed`;
   seasonShots.textContent = `${getShots()} shot against`;
@@ -66,11 +70,19 @@ let seasonStats = function(getGames) {
   seasonSPHolder.textContent = `${seasonSP} save %`;
   seasonGaaHolder.textContent = `${seasonGAA} GAA`;
 
+  seasonStaticsHolder.className = 'season_chart';
+  seasonStaticsHolder.id = 'season_chart';
+  seasonStaticsHolder.textContent = 'View charts';
+  seasonStaticsHolder.addEventListener('click', () => {
+    createChart(getGoalsPeriod());
+  });
+  
   seasonDataHolder.appendChild(seasonName);
   seasonDataHolder.appendChild(seasonGoals);
   seasonDataHolder.appendChild(seasonShots);
   seasonDataHolder.appendChild(seasonSPHolder);
   seasonDataHolder.appendChild(seasonGaaHolder);
+  seasonDataHolder.appendChild(seasonStaticsHolder);
   return seasonDataHolder;
 };
 
@@ -235,6 +247,74 @@ let filterGames = () => {
       let search = gameFilters.searchString.toLowerCase();
       return rink.includes(search) || city.includes(search) || home_team.includes(search) || visitor_team.includes(search);
     });
+};
+
+let createChart = function(getData) {
+  let gameData = document.getElementById('games-data');
+  let chartCanvas = document.createElement('canvas');
+  let canvasHolder = document.createElement('div');
+  chartCanvas.id = 'season_chart_canvas';
+  chartCanvas.classList = 'season_chart_canvas';
+
+  gameData.innerHTML = '';
+  gameData.appendChild(canvasHolder);
+  canvasHolder.appendChild(chartCanvas);
+
+  var ctx = document.getElementById('season_chart_canvas').getContext('2d');
+    let myChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+        labels: ['1 period', '2 period', '3 period'],
+        datasets: [{
+            label: '# goals',
+            data: [parseInt(getData[0]), parseInt(getData[1]), parseInt(getData[2])],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+        scales: {
+            yAxes: [{ ticks: { beginAtZero: true }}],
+            xAxes: [{ ticks: { beginAtZero: true }}]
+        }
+    }});
+}
+
+let getGoalsPeriod = () => {
+  let goals = [0, 0, 0];
+  let getSeasonGames = filterGames();
+  
+  getSeasonGames.forEach(function(game) {
+    let result = game.result;
+    if (game.home === profile.team) {
+      goals[0] = parseInt(goals[0]) + parseInt(result[0][0]);
+      goals[1] = parseInt(goals[1]) + parseInt(result[1][0]);
+      goals[2] = parseInt(goals[2]) + parseInt(result[2][0]);
+    }
+    else if (game.visitor == profile.team) {
+      goals[0] = parseInt(goals[0]) + parseInt(result[0][2]);
+      goals[1] = parseInt(goals[1]) + parseInt(result[1][2]);
+      goals[2] = parseInt(goals[2]) + parseInt(result[2][2]);
+    }
+  });
+  return goals;
 };
 
 // Render games to website

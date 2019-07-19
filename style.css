@@ -82,7 +82,6 @@ option {
     line-height: 36px;
 }
 
-
 /* Season Panel */
 
 .season_stat_panel {
@@ -114,6 +113,19 @@ option {
 
 .season_name {
     background-color: rgb(24, 40, 93) !important;
+    cursor: pointer;
+}
+
+.season_chart {
+    cursor: pointer;
+    background-color: rgb(13, 94, 40) !important;
+}
+
+.season_chart_canvas  {
+    background-color: #131313;
+    border-radius: 8px;
+    max-height: 350px;
+    width: 100%;
 }
 
 /* Profile */
@@ -121,6 +133,7 @@ option {
 .profile {
     font-size: 16px;
     color: rgb(201, 201, 201);
+    min-width: 20vw;
     flex-grow: 4;
     margin-right: 15px;
 }
@@ -146,8 +159,12 @@ option {
 
 .profile-field li {
     padding: 9px;
-    border-bottom: 1px solid #222222;
+    border-bottom: 1px solid #474747;
     background-color: #131313;
+}
+
+.profile-field li:first-child {
+    border-top: 1px solid #474747;
 }
 
 .content {
@@ -214,6 +231,7 @@ p {
     color: rgb(163, 163, 163);
     text-transform: uppercase;
 }
+
 
 @media only screen and (max-width: 1300px) {
 
