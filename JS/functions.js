@@ -1,7 +1,28 @@
 // Generate season stats
-let seasonStats = function(getGames) {
-  let getSeason = '';
+let getGames = games;
+let getSeason = '';
+let wins = 0;
+let losts = 0;
+let ties = 0;
 
+let getGameResults = function () {
+  let gameResults = [];
+  getGames.forEach(function(game) {
+    let home = 0;
+    let visitor = 0;
+
+  game.result.forEach(function(period) {
+    score = period.split("-");
+    home += parseInt(score[1]);
+    visitor += parseInt(score[0]);
+    });
+    gameResults.push([game.home, home, visitor]);
+    }
+  )
+  return gameResults;
+};
+
+let seasonStats = function(getGames) {
   if (gameFilters.searchString.length > 0) getSeason = 'CUSTOM VIEW';
   else  getSeason = `${gameFilters.seasonFilter}`;
 
@@ -47,6 +68,22 @@ let seasonStats = function(getGames) {
     return shots;
   };
 
+  
+  getGameResults().forEach(function(game) {
+    if(game[0] === profile.team) {
+      if (game[1] > game[2]) wins = (wins + 1);
+      else if (game[1] === game[2]) ties = (ties + 1);
+      else losts = (losts + 1);
+    }
+
+    else {
+      if (game[1] < game[2]) wins = (wins + 1);
+      else if (game[1] === game[2]) ties = (ties + 1);
+      else losts = (losts + 1);
+    }
+
+  });
+  
   let seasonGAA = ((getGoals() * 60) / (games.length*60)).toFixed(2);
   let seasonSP = ((getShots() - getGoals()) / getShots()).toFixed(3);
 
@@ -56,6 +93,7 @@ let seasonStats = function(getGames) {
   let seasonShots = document.createElement('span');
   let seasonSPHolder = document.createElement('span');
   let seasonGaaHolder = document.createElement('span');
+  let seasonGameResults = document.createElement('span');
   let seasonStaticsHolder = document.createElement('span');
 
   seasonName.className = 'season_name';
@@ -70,6 +108,8 @@ let seasonStats = function(getGames) {
   seasonSPHolder.textContent = `${seasonSP} save %`;
   seasonGaaHolder.textContent = `${seasonGAA} GAA`;
 
+  seasonGameResults.textContent = `W: ${wins} | L: ${losts} | T: ${ties}`;
+
   seasonStaticsHolder.className = 'season_chart';
   seasonStaticsHolder.id = 'season_chart';
   seasonStaticsHolder.textContent = 'View charts';
@@ -78,6 +118,7 @@ let seasonStats = function(getGames) {
   });
   
   seasonDataHolder.appendChild(seasonName);
+  seasonDataHolder.appendChild(seasonGameResults);
   seasonDataHolder.appendChild(seasonGoals);
   seasonDataHolder.appendChild(seasonShots);
   seasonDataHolder.appendChild(seasonSPHolder);
@@ -175,6 +216,10 @@ let generateProfile = () => {
   let profileName = document.createElement("li");
   profileName.textContent = `${profile.name} (#${profile.jerseyNumber})`;
   profileUL.appendChild(profileName);
+
+  let gameStats = document.createElement("li");
+  gameStats.textContent = `Team: ${profile.team}`;
+  profileUL.appendChild(gameStats);
 
   let profileTeam = document.createElement("li");
   profileTeam.textContent = `Team: ${profile.team}`;
@@ -332,3 +377,10 @@ let renderItems = () => {
     document.getElementById('season_stat_panel').innerHTML = '';
     document.getElementById('season_stat_panel').appendChild(seasonStats(filteredGames));
 };
+
+// Create necessary elements
+generateProfile();
+generateSearchPanel();
+generateSeasonStatPanel();
+gameBox();
+renderItems();

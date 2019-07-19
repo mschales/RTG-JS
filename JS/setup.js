@@ -1,19 +1,3 @@
-let gameFilters = {
-  'searchString': '',
-  'seasonFilter': ''
-}
-
-// Profile
-let profile = {
-  'name':'Example Goalie',
-  'team':'Hockey City',
-  'jerseyNumber':'85',
-  'youtube':'',
-  'twitter':'',
-  'instagram':'',
-  'facebook':''
-}
-
 // Array to hold games... amazing stuff.
 let games = [
   {
@@ -278,6 +262,23 @@ let games = [
   },
 ];
 
+// Search filters
+let gameFilters = {
+  'searchString': '',
+  'seasonFilter': ''
+}
+
+// Profile
+let profile = {
+  'name':'Example Goalie',
+  'team':'Hockey City',
+  'jerseyNumber':'85',
+  'youtube':'',
+  'twitter':'',
+  'instagram':'',
+  'facebook':''
+}
+
 // Location array for... locations? Duh.
 let locations = [
   { city: "Langley City", rink: "Canlan Ice Sports - Twin Rinks" },
@@ -327,9 +328,3 @@ let generateGames = function(gameAmount) {
     });
   }
 };
-
-// Create necessary elements
-generateProfile();
-generateSearchPanel();
-generateSeasonStatPanel();
-gameBox();
