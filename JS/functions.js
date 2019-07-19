@@ -1,13 +1,16 @@
 // Generate season stats
-let getGames = games;
+let savedGames = games;
 let getSeason = '';
-let wins = 0;
-let losts = 0;
-let ties = 0;
 
-let getGameResults = function () {
+let getGameResults = function (getGames) {
   let gameResults = [];
-  getGames.forEach(function(game) {
+  let getResults = [0, 0, 0]
+
+  let getSeasonGames = getGames.filter(function(game) {
+    return game.season.includes(gameFilters.seasonFilter);
+  });
+
+  getSeasonGames.forEach(function(game) {
     let home = 0;
     let visitor = 0;
 
@@ -17,9 +20,26 @@ let getGameResults = function () {
     visitor += parseInt(score[0]);
     });
     gameResults.push([game.home, home, visitor]);
-    }
-  )
+    });
   return gameResults;
+};
+
+let parseGameResults = function(getGames) {
+  let getResults = [0, 0, 0]
+  getGames.forEach(function(game) {
+    if (game[0] === profile.team) {
+      if (game[1] > game[2]) getResults[0] = getResults[0]+1;
+      else if (game[1] == game[2]) getResults[2] = getResults[2]+1;
+      else getResults[1] = getResults[1]+1;
+    }
+
+    else {
+      if (game[1] < game[2]) getResults[0] = getResults[0]+1;
+      else if (game[1] == game[2]) getResults[2] = getResults[2]+1;
+      else getResults[1] = getResults[1]+1;
+    }
+  });
+  return getResults;
 };
 
 let seasonStats = function(getGames) {
@@ -67,22 +87,6 @@ let seasonStats = function(getGames) {
     });
     return shots;
   };
-
-  
-  getGameResults().forEach(function(game) {
-    if(game[0] === profile.team) {
-      if (game[1] > game[2]) wins = (wins + 1);
-      else if (game[1] === game[2]) ties = (ties + 1);
-      else losts = (losts + 1);
-    }
-
-    else {
-      if (game[1] < game[2]) wins = (wins + 1);
-      else if (game[1] === game[2]) ties = (ties + 1);
-      else losts = (losts + 1);
-    }
-
-  });
   
   let seasonGAA = ((getGoals() * 60) / (games.length*60)).toFixed(2);
   let seasonSP = ((getShots() - getGoals()) / getShots()).toFixed(3);
@@ -108,7 +112,9 @@ let seasonStats = function(getGames) {
   seasonSPHolder.textContent = `${seasonSP} save %`;
   seasonGaaHolder.textContent = `${seasonGAA} GAA`;
 
-  seasonGameResults.textContent = `W: ${wins} | L: ${losts} | T: ${ties}`;
+  let getGamesResults = getGameResults(savedGames);
+  let getResults = parseGameResults(getGamesResults);
+  seasonGameResults.textContent = `W: ${getResults[0]} | L: ${getResults[1]} | T: ${getResults[2]}`;
 
   seasonStaticsHolder.className = 'season_chart';
   seasonStaticsHolder.id = 'season_chart';
@@ -158,8 +164,7 @@ let createGameItem = function(game) {
       let shots = item.split("-");
       shots_visitors += parseInt(shots[1]);
       shots_home += parseInt(shots[0]);
-    }
-    );
+    });
     return [shots_home,  shots_visitors]
   };
 
@@ -220,10 +225,6 @@ let generateProfile = () => {
   let gameStats = document.createElement("li");
   gameStats.textContent = `Team: ${profile.team}`;
   profileUL.appendChild(gameStats);
-
-  let profileTeam = document.createElement("li");
-  profileTeam.textContent = `Team: ${profile.team}`;
-  profileUL.appendChild(profileTeam);
 };
 
 // Generate search panel
@@ -306,12 +307,13 @@ let createChart = function(getData) {
   canvasHolder.appendChild(chartCanvas);
 
   var ctx = document.getElementById('season_chart_canvas').getContext('2d');
+    if (getSeason.length <= 1) getSeason = 'ALL'; 
     let myChart = new Chart(ctx, {
     type: 'horizontalBar',
     data: {
         labels: ['1 period', '2 period', '3 period'],
         datasets: [{
-            label: '# goals',
+            label: `# goals per period (${getSeason})`,
             data: [parseInt(getData[0]), parseInt(getData[1]), parseInt(getData[2])],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',

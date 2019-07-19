@@ -159,6 +159,7 @@ option {
 
 .profile-field li {
     padding: 9px;
+    margin: 0;
     border-bottom: 1px solid #474747;
     background-color: #131313;
 }
