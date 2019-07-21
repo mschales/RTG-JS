@@ -374,10 +374,17 @@ let renderItems = () => {
   let contentPage = document.getElementById("games-data");
   contentPage.innerHTML = "";
   let filteredGames = filterGames();
-  filteredGames.forEach(item => {contentPage.appendChild(createGameItem(item))});
-  document.getElementById("gameTotalStats").textContent = `${filteredGames.length} games found`;
-  document.getElementById("season_stat_panel").innerHTML = "";
-  document.getElementById("season_stat_panel").appendChild(seasonStats(filteredGames));
+  if (filteredGames.length > 0) {
+    document.getElementById("season_stat_panel").appendChild(seasonStats(filteredGames));
+    filteredGames.forEach(item => {contentPage.appendChild(createGameItem(item))});
+    document.getElementById("gameTotalStats").textContent = `${filteredGames.length} games found`;
+    document.getElementById("season_stat_panel").innerHTML = "";
+    document.getElementById("season_stat_panel").appendChild(seasonStats(filteredGames));  
+  }
+  else {
+    document.getElementById("season_stat_panel").innerHTML = `No games found whille searching for "${gameFilters.searchString}"`;
+    document.getElementById("gameTotalStats").textContent = `${filteredGames.length} games found`;
+  }
 };
 
 // Create necessary elements
