@@ -2,7 +2,9 @@
 let savedGames = games;
 let getSeason = "";
 
-let getGameResults = getGames => {
+// Get wins
+let getGameResults = (getGames) => {
+
   let gameResults = [];
   let getResults = [0, 0, 0];
 
@@ -13,7 +15,6 @@ let getGameResults = getGames => {
   getSeasonGames.forEach((game) => {
     let home = 0;
     let visitor = 0;
-
     game.result.forEach(period => {
       score = period.split("-");
       home += parseInt(score[1]);
@@ -21,12 +22,8 @@ let getGameResults = getGames => {
     });
     gameResults.push([game.home, home, visitor]);
   });
-  return gameResults;
-};
 
-let parseGameResults = getGames => {
-  let getResults = [0, 0, 0];
-  getGames.forEach((game) => {
+  gameResults.forEach((game) => {
     if (game[0] === profile.team) {
       if (game[1] > game[2]) getResults[0] = getResults[0] + 1;
       else if (game[1] == game[2]) getResults[2] = getResults[2] + 1;
@@ -37,15 +34,14 @@ let parseGameResults = getGames => {
       else getResults[1] = getResults[1] + 1;
     }
   });
+
   return getResults;
 };
 
-let seasonStats = getGames => {
-  if (gameFilters.searchString.length > 0) getSeason = "CUSTOM VIEW";
-  else getSeason = `${gameFilters.seasonFilter}`;
-
-  let getSeasonGames = getGames.filter((game) => { return game.season.includes(gameFilters.seasonFilter);
-  });
+//Generate season stats for the
+function generateSeasonStats (getGames) {
+  gameFilters.searchString.length > 0 ? getSeason = "CUSTOM VIEW" : getSeason = `${gameFilters.seasonFilter}`;
+  let getSeasonGames = getGames.filter((game) => { return game.season.includes(gameFilters.seasonFilter) });
 
   let getGoals = () => {
     let goals = 0;
@@ -97,9 +93,7 @@ let seasonStats = getGames => {
 
   seasonName.className = "season_name";
   seasonName.textContent = `${getSeason} Statistics`;
-  seasonName.addEventListener("click", () => {
-    renderItems();
-  });
+  seasonName.addEventListener("click", () => { renderGames(); });
 
   seasonGoals.textContent = `${getGoals()} goals allowed`;
   seasonShots.textContent = `${getShots()} shot against`;
@@ -107,11 +101,9 @@ let seasonStats = getGames => {
   seasonSPHolder.textContent = `${seasonSP} save %`;
   seasonGaaHolder.textContent = `${seasonGAA} GAA`;
 
-  let getGamesResults = getGameResults(savedGames);
-  let getResults = parseGameResults(getGamesResults);
-  seasonGameResults.textContent = `W: ${getResults[0]} | L: ${
-    getResults[1]
-  } | T: ${getResults[2]}`;
+  let getResults = getGameResults(savedGames);
+  console.log(getResults);
+  seasonGameResults.textContent = `W: ${getResults[0]} | L: ${getResults[1]} | T: ${getResults[2]}`;
 
   seasonStaticsHolder.className = "season_chart";
   seasonStaticsHolder.id = "season_chart";
@@ -131,7 +123,7 @@ let seasonStats = getGames => {
 };
 
 // Create game item for rendering
-let createGameItem = game => {
+function createGameItem (game) {
   let itemHolder = document.createElement("div");
   itemHolder.className = "content-item";
 
@@ -164,8 +156,8 @@ let createGameItem = game => {
     return [shots_home, shots_visitors];
   };
 
-  if (game.home === profile.team) gameStats = [setupResult()[0], setupShots()[0]];
-  else if (game.visitor === profile.team) gameStats = [setupResult()[1], setupShots()[1]];
+  // Set score display for invidual games (example: 7 - 2)
+  game.home === profile.team ? gameStats = [setupResult()[0], setupShots()[0]] : gameStats = [setupResult()[1], setupShots()[1]];
 
   let gameLocation = document.createElement("div");
   gameLocation.textContent = `${game.home} (${setupResult()[1]}) - ${game.visitor} (${setupResult()[0]})`;
@@ -200,7 +192,6 @@ let createGameItem = game => {
   gameSA.className = "item";
   sa_desc.textContent = "save percentage";
   gameSA.appendChild(sa_desc);
-
   itemHolder.appendChild(gameLocation);
   itemHolder.appendChild(gameShots);
   itemHolder.appendChild(gameGoals);
@@ -209,7 +200,7 @@ let createGameItem = game => {
 };
 
 // Generate profile for the side box.
-let generateProfile = () => {
+function generateProfile () {
   let profileContainer = document.getElementById("profile-field");
   let profileUL = document.createElement("ul");
   profileContainer.appendChild(profileUL);
@@ -224,7 +215,7 @@ let generateProfile = () => {
 };
 
 // Generate search panel
-let generateSearchPanel = () => {
+function generateSearchPanel () {
   let navigation_holder = document.getElementById("search_container");
   let search_holder = document.createElement("div");
   let search = document.createElement("input");
@@ -236,7 +227,7 @@ let generateSearchPanel = () => {
   search.setAttribute("placeholder", "Search by rink, team or city..");
   search.addEventListener("input", (e) => {
     gameFilters.searchString = e.target.value;
-    renderItems();
+    renderGames();
   });
 
   for (let i = 0; i < seasonOptions.length; i++) {
@@ -248,7 +239,7 @@ let generateSearchPanel = () => {
 
   dropDownSearch.addEventListener("change", (e) => {
 gameFilters.seasonFilter = e.target.value;
-    renderItems();
+    renderGames();
   });
 
   search_holder.appendChild(search);
@@ -256,8 +247,8 @@ gameFilters.seasonFilter = e.target.value;
   navigation_holder.appendChild(search_holder);
 };
 
-// Generate season stats panel and put it after search panel
-let generateSeasonStatPanel = () => {
+// Generate season stats panel
+function generateSeasonStatPanel ()  {
   let gamePanel = document.getElementById("games-data");
   let parentElement = document.getElementById("content-data");
   let seasonStatPanel = document.createElement("div");
@@ -267,7 +258,7 @@ let generateSeasonStatPanel = () => {
 };
 
 // Create and display "X games found" element.
-let gameBox = () => {
+function gameBox () {
   let container = document.getElementById("search_container");
   let gameDisplay = document.createElement("div");
   gameDisplay.className = "gameTotalStats";
@@ -370,16 +361,16 @@ let getGoalsPeriod = () => {
 };
 
 // Render games to website
-let renderItems = () => {
+function renderGames() {
   let contentPage = document.getElementById("games-data");
   contentPage.innerHTML = "";
   let filteredGames = filterGames();
   if (filteredGames.length > 0) {
-    document.getElementById("season_stat_panel").appendChild(seasonStats(filteredGames));
+    document.getElementById("season_stat_panel").appendChild(generateSeasonStats(filteredGames));
     filteredGames.forEach(item => {contentPage.appendChild(createGameItem(item))});
     document.getElementById("gameTotalStats").textContent = `${filteredGames.length} games found`;
     document.getElementById("season_stat_panel").innerHTML = "";
-    document.getElementById("season_stat_panel").appendChild(seasonStats(filteredGames));  
+    document.getElementById("season_stat_panel").appendChild(generateSeasonStats(filteredGames));  
   }
   else {
     document.getElementById("season_stat_panel").innerHTML = `No games found whille searching for "${gameFilters.searchString}"`;
@@ -392,4 +383,4 @@ generateProfile();
 generateSearchPanel();
 generateSeasonStatPanel();
 gameBox();
-renderItems();
+renderGames();
