@@ -2,9 +2,8 @@
 let savedGames = games;
 let getSeason = "";
 
-// Get wins
+// Get total wins, loses and ties to be used for season stats
 let getGameResults = (getGames) => {
-
   let gameResults = [];
   let getResults = [0, 0, 0];
 
@@ -38,8 +37,8 @@ let getGameResults = (getGames) => {
   return getResults;
 };
 
-//Generate season stats for the
-function generateSeasonStats (getGames) {
+// Generate season stats for the
+let generateSeasonStats = (getGames) => {
   gameFilters.searchString.length > 0 ? getSeason = "CUSTOM VIEW" : getSeason = `${gameFilters.seasonFilter}`;
   let getSeasonGames = getGames.filter((game) => { return game.season.includes(gameFilters.seasonFilter) });
 
@@ -81,30 +80,24 @@ function generateSeasonStats (getGames) {
 
   let seasonGAA = ((getGoals() * 60) / (games.length * 60)).toFixed(2);
   let seasonSP = ((getShots() - getGoals()) / getShots()).toFixed(3);
+  let getResults = getGameResults(savedGames);
 
   let seasonDataHolder = document.createElement("div");
   let seasonName = document.createElement("span");
-  let seasonGoals = document.createElement("span");
-  let seasonShots = document.createElement("span");
-  let seasonSPHolder = document.createElement("span");
-  let seasonGaaHolder = document.createElement("span");
-  let seasonGameResults = document.createElement("span");
-  let seasonStaticsHolder = document.createElement("span");
-
   seasonName.className = "season_name";
   seasonName.textContent = `${getSeason} Statistics`;
   seasonName.addEventListener("click", () => { renderGames(); });
-
+  let seasonGoals = document.createElement("span");
   seasonGoals.textContent = `${getGoals()} goals allowed`;
+  let seasonShots = document.createElement("span");
   seasonShots.textContent = `${getShots()} shot against`;
-
+  let seasonSPHolder = document.createElement("span");
   seasonSPHolder.textContent = `${seasonSP} save %`;
+  let seasonGaaHolder = document.createElement("span");
   seasonGaaHolder.textContent = `${seasonGAA} GAA`;
-
-  let getResults = getGameResults(savedGames);
-  console.log(getResults);
+  let seasonGameResults = document.createElement("span");
   seasonGameResults.textContent = `W: ${getResults[0]} | L: ${getResults[1]} | T: ${getResults[2]}`;
-
+  let seasonStaticsHolder = document.createElement("span");
   seasonStaticsHolder.className = "season_chart";
   seasonStaticsHolder.id = "season_chart";
   seasonStaticsHolder.textContent = "View charts";
@@ -123,7 +116,7 @@ function generateSeasonStats (getGames) {
 };
 
 // Create game item for rendering
-function createGameItem (game) {
+let createGameItem = (game) => {
   let itemHolder = document.createElement("div");
   itemHolder.className = "content-item";
 
@@ -200,7 +193,7 @@ function createGameItem (game) {
 };
 
 // Generate profile for the side box.
-function generateProfile () {
+let generateProfile = () => {
   let profileContainer = document.getElementById("profile-field");
   let profileUL = document.createElement("ul");
   profileContainer.appendChild(profileUL);
@@ -215,7 +208,7 @@ function generateProfile () {
 };
 
 // Generate search panel
-function generateSearchPanel () {
+let generateSearchPanel=  () => {
   let navigation_holder = document.getElementById("search_container");
   let search_holder = document.createElement("div");
   let search = document.createElement("input");
@@ -248,7 +241,7 @@ gameFilters.seasonFilter = e.target.value;
 };
 
 // Generate season stats panel
-function generateSeasonStatPanel ()  {
+let generateSeasonStatPanel = () =>  {
   let gamePanel = document.getElementById("games-data");
   let parentElement = document.getElementById("content-data");
   let seasonStatPanel = document.createElement("div");
@@ -258,7 +251,7 @@ function generateSeasonStatPanel ()  {
 };
 
 // Create and display "X games found" element.
-function gameBox () {
+let gameBox = () => {
   let container = document.getElementById("search_container");
   let gameDisplay = document.createElement("div");
   gameDisplay.className = "gameTotalStats";
@@ -285,6 +278,52 @@ let filterGames = () => {
   }));
 };
 
+// Get goals for each period
+let getGoalsPeriod = () => {
+  let goals = [0, 0, 0];
+  let getSeasonGames = filterGames();
+
+  getSeasonGames.forEach(game => {
+    let result = game.result;
+    if (game.home === profile.team) {
+      goals[0] = parseInt(goals[0]) + parseInt(result[0][0]);
+      goals[1] = parseInt(goals[1]) + parseInt(result[1][0]);
+      goals[2] = parseInt(goals[2]) + parseInt(result[2][0]);
+    } else if (game.visitor == profile.team) {
+      goals[0] = parseInt(goals[0]) + parseInt(result[0][2]);
+      goals[1] = parseInt(goals[1]) + parseInt(result[1][2]);
+      goals[2] = parseInt(goals[2]) + parseInt(result[2][2]);
+    }
+  });
+  return goals;
+};
+
+// Render games to website
+let renderGames = () => {
+  let contentPage = document.getElementById("games-data");
+  let seasonStatPanel = document.getElementById("season_stat_panel");
+  let gamesFoundBox =   document.getElementById("gameTotalStats");
+  contentPage.innerHTML = "";
+  let filteredGames = filterGames();
+
+  if (filteredGames.length > 0) {
+    contentPage.classList.remove('search-notfound');
+    seasonStatPanel.style.display = 'flex';  
+    seasonStatPanel.appendChild(generateSeasonStats(filteredGames));
+    filteredGames.forEach(item => {contentPage.appendChild(createGameItem(item))})
+    gamesFoundBox.textContent = `${filteredGames.length} games found`;
+    seasonStatPanel.innerHTML = "";
+    seasonStatPanel.appendChild(generateSeasonStats(filteredGames));  
+  }
+  else {
+    contentPage.innerHTML = `No games found for <span class='search-keyword'>${gameFilters.searchString}</span> keyword`;
+    contentPage.classList.add('search-notfound');
+    gamesFoundBox.textContent = `no games found`;
+    seasonStatPanel.style.display = 'none';  
+  }
+};
+
+// Generate chart for goals per period
 let createChart = getData => {
   let gameData = document.getElementById("games-data");
   let chartCanvas = document.createElement("canvas");
@@ -339,43 +378,6 @@ let createChart = getData => {
       }
     }
   });
-};
-
-let getGoalsPeriod = () => {
-  let goals = [0, 0, 0];
-  let getSeasonGames = filterGames();
-
-  getSeasonGames.forEach(game => {
-    let result = game.result;
-    if (game.home === profile.team) {
-      goals[0] = parseInt(goals[0]) + parseInt(result[0][0]);
-      goals[1] = parseInt(goals[1]) + parseInt(result[1][0]);
-      goals[2] = parseInt(goals[2]) + parseInt(result[2][0]);
-    } else if (game.visitor == profile.team) {
-      goals[0] = parseInt(goals[0]) + parseInt(result[0][2]);
-      goals[1] = parseInt(goals[1]) + parseInt(result[1][2]);
-      goals[2] = parseInt(goals[2]) + parseInt(result[2][2]);
-    }
-  });
-  return goals;
-};
-
-// Render games to website
-function renderGames() {
-  let contentPage = document.getElementById("games-data");
-  contentPage.innerHTML = "";
-  let filteredGames = filterGames();
-  if (filteredGames.length > 0) {
-    document.getElementById("season_stat_panel").appendChild(generateSeasonStats(filteredGames));
-    filteredGames.forEach(item => {contentPage.appendChild(createGameItem(item))});
-    document.getElementById("gameTotalStats").textContent = `${filteredGames.length} games found`;
-    document.getElementById("season_stat_panel").innerHTML = "";
-    document.getElementById("season_stat_panel").appendChild(generateSeasonStats(filteredGames));  
-  }
-  else {
-    document.getElementById("season_stat_panel").innerHTML = `No games found whille searching for "${gameFilters.searchString}"`;
-    document.getElementById("gameTotalStats").textContent = `${filteredGames.length} games found`;
-  }
 };
 
 // Create necessary elements

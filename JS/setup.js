@@ -307,23 +307,23 @@ let seasonOptions = [
 ];
 
 // Simple function to get random int
-let getNumber = function(min, max) {
+let getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
 // Populate game array with some data
-let generateGames = function(gameAmount) {
+let generateGames = (gameAmount) => {
   for (let i = 0; i < gameAmount; i++) {
     games.push({
-      location: locations[getNumber(0, locations.length)],
-      teams: `${teams[getNumber(0, teams.length)]} vs ${teams[getNumber(0, teams.length)]}`,
+      location: locations[getRandomNumber(0, locations.length)],
+      teams: `${teams[getRandomNumber(0, teams.length)]} vs ${teams[getRandomNumber(0, teams.length)]}`,
       versus: '?',
       date: '20 January 2017',
       season: '',
-      goals: getNumber(0, 9),
-      shots: getNumber(20, 40),
+      goals: getRandomNumber(0, 9),
+      shots: getRandomNumber(20, 40),
       minutes: 55
     });
   }
