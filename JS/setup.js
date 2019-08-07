@@ -270,13 +270,20 @@ let gameFilters = {
 
 // Profile
 let profile = {
-  'name':'Example Goalie',
-  'team':'Hockey City',
-  'jerseyNumber':'85',
-  'youtube':'',
-  'twitter':'',
-  'instagram':'',
-  'facebook':''
+  info: {
+    'name':'Example Goalie',
+    'team':'Hockey City',
+    'jerseyNumber':'85',
+    'age':35,
+    'height':'193 cm',
+    'weight':'85 kg',  
+  },
+  profileTitle: function () {
+    return `${this.info.name} | #${this.info.jerseyNumber}`
+  },
+  profileString: function () {
+    return `${this.info.height} | ${this.info.weight} | Age: ${this.info.age} | Team ${this.info.team}`
+  }
 }
 
 // Location array for... locations? Duh.

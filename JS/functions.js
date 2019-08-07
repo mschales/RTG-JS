@@ -40,16 +40,15 @@ let getGameResults = (getGames) => {
 let generateSeasonStats = (getGames) => {
   gameFilters.searchString.length > 0 ? getSeason = "CUSTOM VIEW" : getSeason = `${gameFilters.seasonFilter}`;
   let getSeasonGames = getGames.filter((game) => game.season.includes(gameFilters.seasonFilter));
-
   let getGoals = () => {
     let goals = 0;
     getSeasonGames.forEach((game) => {
-      if (game.home === profile.team) {
+      if (game.home === profile.info.team) {
         game.result.forEach((period) => {
           score = period.split("-");
           goals += parseInt(score[0]);
         });
-      } else if (game.visitor == profile.team) {
+      } else if (game.visitor === profile.info.team) {
         game.result.forEach((period) => {
           score = period.split("-");
           goals += parseInt(score[1]);
@@ -62,12 +61,12 @@ let generateSeasonStats = (getGames) => {
   let getShots = () => {
     let shots = 0;
     getSeasonGames.forEach((game) => {
-      if (game.home === profile.team) {
+      if (game.home === profile.info.team) {
         game.shots.forEach((period) => {
           shot = period.split("-");
           shots += parseInt(shot[0]);
         });
-      } else if (game.visitor == profile.team) {
+      } else if (game.visitor === profile.info.team) {
         game.shots.forEach((period) => {
           shot = period.split("-");
           shots += parseInt(shot[1]);
@@ -148,26 +147,26 @@ let createGameItem = (game) => {
   };
 
   // Set score display for invidual games (example: 7 - 2)
-  game.home === profile.team ? gameStats = [setupResult()[0], setupShots()[0]] : gameStats = [setupResult()[1], setupShots()[1]];
+  game.home === profile.info.team ? gameStats = [setupResult()[0], setupShots()[0]] : gameStats = [setupResult()[1], setupShots()[1]];
 
   let gameLocation = document.createElement("div");
-  gameLocation.textContent = `${game.home} (${setupResult()[1]}) - ${game.visitor} (${setupResult()[0]})`;
-  gameLocation.className = "item location";
+  gameLocation.innerHTML = `<div> ${game.home} - ${game.visitor} </div> <div>${setupResult()[1]} - ${setupResult()[0]} </div>`;
+  gameLocation.className = "item content-game-item";
 
-  let gameDate = document.createElement("p");
-  gameDate.textContent = `${moment(game.date).format("MMM/DD/Y")}, ${game.location.rink}`;
-  gameLocation.appendChild(gameDate);
+  let gameDate = document.createElement("div");
+  gameDate.textContent = `${moment(game.date).format("MMM/DD/Y")}`;
+  gameDate.className = "item";
 
   let gameShots = document.createElement("div");
   gameShots.textContent = `${gameStats[1]}`;
   gameShots.className = "item";
-  shot_desc.textContent = "shot against";
+  shot_desc.textContent = "";
   gameShots.appendChild(shot_desc);
 
   let gameGoals = document.createElement("div");
   gameGoals.textContent = `${gameStats[0]}`;
   gameGoals.className = "item";
-  goals_desc.textContent = "goals allowed";
+  goals_desc.textContent = "";
   gameGoals.appendChild(goals_desc);
 
   let gameMiinutes = document.createElement("div");
@@ -179,10 +178,11 @@ let createGameItem = (game) => {
   let gaa = (gameStats[1] - gameStats[0]) / gameStats[1];
   gaa = gaa.toFixed(3);
 
-  gameSA.textContent = `${gaa}`;
+  gameSA.textContent = `${gaa} %`;
   gameSA.className = "item";
-  sa_desc.textContent = "save percentage";
+  sa_desc.textContent = "";
   gameSA.appendChild(sa_desc);
+  itemHolder.appendChild(gameDate);
   itemHolder.appendChild(gameLocation);
   itemHolder.appendChild(gameShots);
   itemHolder.appendChild(gameGoals);
@@ -193,16 +193,13 @@ let createGameItem = (game) => {
 // Generate profile for the side box.
 let generateProfile = () => {
   let profileContainer = document.getElementById("profile-field");
-  let profileUL = document.createElement("ul");
-  profileContainer.appendChild(profileUL);
-
-  let profileName = document.createElement("li");
-  profileName.textContent = `${profile.name} (#${profile.jerseyNumber})`;
-  profileUL.appendChild(profileName);
-
-  let gameStats = document.createElement("li");
-  gameStats.textContent = `Team: ${profile.team}`;
-  profileUL.appendChild(gameStats);
+  let profileTitle = document.createElement("div");
+  let profileInfo = document.createElement("div");
+  profileContainer.appendChild(profileTitle);
+  profileContainer.appendChild(profileInfo);
+  profileTitle.classList.add('profile-title');
+  profileTitle.textContent = profile.profileTitle();
+  profileInfo.textContent = profile.profileString();
 };
 
 // Generate search panel
@@ -278,11 +275,11 @@ let getGoalsPeriod = () => {
 
   getSeasonGames.forEach(game => {
     let result = game.result;
-    if (game.home === profile.team) {
+    if (game.home === profile.info.team) {
       goals[0] = parseInt(goals[0]) + parseInt(result[0][0]);
       goals[1] = parseInt(goals[1]) + parseInt(result[1][0]);
       goals[2] = parseInt(goals[2]) + parseInt(result[2][0]);
-    } else if (game.visitor == profile.team) {
+    } else if (game.visitor == profile.info.team) {
       goals[0] = parseInt(goals[0]) + parseInt(result[0][2]);
       goals[1] = parseInt(goals[1]) + parseInt(result[1][2]);
       goals[2] = parseInt(goals[2]) + parseInt(result[2][2]);
@@ -299,9 +296,37 @@ let renderGames = () => {
   contentPage.innerHTML = "";
   let filteredGames = filterGames();
 
+  let header = document.createElement("div");
+  let dateHeader = document.createElement("div");
+  let gameheader = document.createElement("div");
+  let scoreHeader = document.createElement("div");
+  let teamheader = document.createElement("div");
+  let shotHeader = document.createElement("div");
+  let gaaHeader = document.createElement("div");
+  let saaHeader = document.createElement("div");
+
+  header.classList.add('navi');
+  gameheader.classList.add('game');
+  dateHeader.textContent = 'DATE';
+  teamheader.textContent = 'TEAMS';
+  scoreHeader.textContent = 'SCORE';
+  shotHeader.textContent = 'SHOTS AGAINST';
+  gaaHeader.textContent = "GOALS ALLOWED";
+  saaHeader.textContent = 'SAVE PERCENTAGE';
+
+  header.appendChild(dateHeader);
+  header.appendChild(gameheader);
+  gameheader.appendChild(scoreHeader);
+  gameheader.appendChild(teamheader);
+  header.appendChild(shotHeader);
+  header.appendChild(gaaHeader);
+  header.appendChild(saaHeader);
+
+  contentPage.appendChild(header);
+
   if (filteredGames.length > 0) {
     contentPage.classList.remove('search-notfound');
-    seasonStatPanel.style.display = 'flex';  
+    seasonStatPanel.style.display = 'flex';
     seasonStatPanel.appendChild(generateSeasonStats(filteredGames));
     filteredGames.forEach(item => {contentPage.appendChild(createGameItem(item))})
     gamesFoundBox.textContent = `${filteredGames.length} games found`;
