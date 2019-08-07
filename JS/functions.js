@@ -7,8 +7,7 @@ let getGameResults = (getGames) => {
   let gameResults = [];
   let getResults = [0, 0, 0];
 
-  let getSeasonGames = getGames.filter(game =>
-    game.season.includes(gameFilters.seasonFilter)
+  let getSeasonGames = getGames.filter(game => game.season.includes(gameFilters.seasonFilter)
   );
 
   getSeasonGames.forEach((game) => {
@@ -40,7 +39,7 @@ let getGameResults = (getGames) => {
 // Generate season stats for the
 let generateSeasonStats = (getGames) => {
   gameFilters.searchString.length > 0 ? getSeason = "CUSTOM VIEW" : getSeason = `${gameFilters.seasonFilter}`;
-  let getSeasonGames = getGames.filter((game) => { return game.season.includes(gameFilters.seasonFilter) });
+  let getSeasonGames = getGames.filter((game) => game.season.includes(gameFilters.seasonFilter));
 
   let getGoals = () => {
     let goals = 0;
@@ -80,7 +79,7 @@ let generateSeasonStats = (getGames) => {
 
   let seasonGAA = ((getGoals() * 60) / (games.length * 60)).toFixed(2);
   let seasonSP = ((getShots() - getGoals()) / getShots()).toFixed(3);
-  let getResults = getGameResults(savedGames);
+  let getResults = getGameResults(getGames);
 
   let seasonDataHolder = document.createElement("div");
   let seasonName = document.createElement("span");
@@ -101,9 +100,7 @@ let generateSeasonStats = (getGames) => {
   seasonStaticsHolder.className = "season_chart";
   seasonStaticsHolder.id = "season_chart";
   seasonStaticsHolder.textContent = "View charts";
-  seasonStaticsHolder.addEventListener("click", () => {
-    createChart(getGoalsPeriod());
-  });
+  seasonStaticsHolder.addEventListener("click", () =>  createChart(getGoalsPeriod()));
 
   seasonDataHolder.appendChild(seasonName);
   seasonDataHolder.appendChild(seasonGameResults);
@@ -129,12 +126,13 @@ let createGameItem = (game) => {
     let goals_home = 0;
     let goals_visitor = 0;
 
-    game.result.forEach(item => {
-      let score = item.split("-");
-      goals_visitor += parseInt(score[1]);
-      goals_home += parseInt(score[0]);
-    });
-    return [goals_home, goals_visitor];
+  game.result.forEach(item => {
+    let score = item.split("-");
+    goals_visitor += parseInt(score[1]);
+    goals_home += parseInt(score[0]);
+  });
+
+  return [goals_home, goals_visitor];
   };
 
   let setupShots = () => {
@@ -231,7 +229,7 @@ let generateSearchPanel=  () => {
   }
 
   dropDownSearch.addEventListener("change", (e) => {
-gameFilters.seasonFilter = e.target.value;
+    gameFilters.seasonFilter = e.target.value;
     renderGames();
   });
 
@@ -269,12 +267,7 @@ let filterGames = () => {
     let home_team = game.home.toLowerCase();
     let visitor_team = game.visitor.toLowerCase();
     let search = gameFilters.searchString.toLowerCase();
-    return (
-      rink.includes(search) ||
-      city.includes(search) ||
-      home_team.includes(search) ||
-      visitor_team.includes(search)
-    );
+  return (rink.includes(search) || city.includes(search) || home_team.includes(search) || visitor_team.includes(search));
   }));
 };
 
@@ -315,6 +308,7 @@ let renderGames = () => {
     seasonStatPanel.innerHTML = "";
     seasonStatPanel.appendChild(generateSeasonStats(filteredGames));  
   }
+
   else {
     contentPage.innerHTML = `No games found for <span class='search-keyword'>${gameFilters.searchString}</span> keyword`;
     contentPage.classList.add('search-notfound');
