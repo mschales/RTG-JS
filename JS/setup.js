@@ -1,3 +1,27 @@
+7// Profile
+let profile = {
+  info: {
+    'name':'M. Schales',
+    'team':'Hockey City',
+    'jerseyNumber':'85',
+    'age':33,
+    'height':'193 cm',
+    'weight':'85 kg',  
+  },
+  profileTitle:  function () { return `${this.info.name} | #${this.info.jerseyNumber}` },
+  profileString: function () { return `${this.info.height} | ${this.info.weight} | Age: ${this.info.age} | Team: ${this.info.team}` }
+}
+
+// Search filters
+let searchFilters = { 'searchString': '', 'seasonFilter': '' }
+
+// Setup values for season switch dropdown
+let seasonOptions = [
+  { name: "ALL", filtervalue: "" },
+  { name: "Summer 2017", filtervalue: "Summer 2017" },
+  { name: "Winter 2017-18", filtervalue: "Winter 2017-18" }
+];
+
 // Array to hold games... amazing stuff.
 let games = [
   {
@@ -261,77 +285,3 @@ let games = [
     minutes: 60
   },
 ];
-
-// Search filters
-let gameFilters = {
-  'searchString': '',
-  'seasonFilter': ''
-}
-
-// Profile
-let profile = {
-  info: {
-    'name':'Example Goalie',
-    'team':'Hockey City',
-    'jerseyNumber':'85',
-    'age':35,
-    'height':'193 cm',
-    'weight':'85 kg',  
-  },
-  profileTitle: function () {
-    return `${this.info.name} | #${this.info.jerseyNumber}`
-  },
-  profileString: function () {
-    return `${this.info.height} | ${this.info.weight} | Age: ${this.info.age} | Team ${this.info.team}`
-  }
-}
-
-// Location array for... locations? Duh.
-let locations = [
-  { city: "Langley City", rink: "Canlan Ice Sports - Twin Rinks" },
-  { city: "Abbotsford", rink: "The Rinks at Summit Centre" },
-  { city: "Halifax", rink: "Spryfield Lions Rink" },
-  { city: "Richmond Hill", rink: "National Training Rinks" },
-  { city: "Chilliwack", rink: "Example Rink Name Longer" }
-];
-
-// Sample team array for dummy data
-let teams = [
-  'The Eh Team',
-  'Nifties',
-  'The Death Stars',
-  'The Reds',
-  'Vipers - Montgomery',
-  'Beauties',
-  'The Bulldawgs'
-];
-
-// Dropdown for season switch
-let seasonOptions = [
-  { name: "ALL", filtervalue: "" },
-  { name: "Summer 2017", filtervalue: "Summer 2017" },
-  { name: "Winter 2017-18", filtervalue: "Winter 2017-18" }
-];
-
-// Simple function to get random int
-let getRandomNumber = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-};
-
-// Populate game array with some data
-let generateGames = (gameAmount) => {
-  for (let i = 0; i < gameAmount; i++) {
-    games.push({
-      location: locations[getRandomNumber(0, locations.length)],
-      teams: `${teams[getRandomNumber(0, teams.length)]} vs ${teams[getRandomNumber(0, teams.length)]}`,
-      versus: '?',
-      date: '20 January 2017',
-      season: '',
-      goals: getRandomNumber(0, 9),
-      shots: getRandomNumber(20, 40),
-      minutes: 55
-    });
-  }
-};

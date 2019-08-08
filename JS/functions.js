@@ -1,4 +1,3 @@
-// Generate season stats
 let savedGames = games;
 let getSeason = "";
 
@@ -7,7 +6,7 @@ let getGameResults = (getGames) => {
   let gameResults = [];
   let getResults = [0, 0, 0];
 
-  let getSeasonGames = getGames.filter(game => game.season.includes(gameFilters.seasonFilter)
+  let getSeasonGames = getGames.filter(game => game.season.includes(searchFilters.seasonFilter)
   );
 
   getSeasonGames.forEach((game) => {
@@ -36,10 +35,10 @@ let getGameResults = (getGames) => {
   return getResults;
 };
 
-// Generate season stats for the
+// Generate season stats for the season information panel
 let generateSeasonStats = (getGames) => {
-  gameFilters.searchString.length > 0 ? getSeason = "CUSTOM VIEW" : getSeason = `${gameFilters.seasonFilter}`;
-  let getSeasonGames = getGames.filter((game) => game.season.includes(gameFilters.seasonFilter));
+  searchFilters.searchString.length > 0 ? getSeason = "CUSTOM VIEW" : getSeason = `${searchFilters.seasonFilter}`;
+  let getSeasonGames = getGames.filter((game) => game.season.includes(searchFilters.seasonFilter));
   let getGoals = () => {
     let goals = 0;
     getSeasonGames.forEach((game) => {
@@ -111,7 +110,7 @@ let generateSeasonStats = (getGames) => {
   return seasonDataHolder;
 };
 
-// Create game item for rendering
+// Prepare game object for rendering
 let createGameItem = (game) => {
   let itemHolder = document.createElement("div");
   itemHolder.className = "content-item";
@@ -154,7 +153,7 @@ let createGameItem = (game) => {
   gameLocation.className = "item content-game-item";
 
   let gameDate = document.createElement("div");
-  gameDate.textContent = `${moment(game.date).format("MMM/DD/Y")}`;
+  gameDate.textContent = moment(new Date(game.date)).format("MMM / DD / YYYY");
   gameDate.className = "item";
 
   let gameShots = document.createElement("div");
@@ -190,7 +189,7 @@ let createGameItem = (game) => {
   return itemHolder;
 };
 
-// Generate profile for the side box.
+// Generate profile header
 let generateProfile = () => {
   let profileContainer = document.getElementById("profile-field");
   let profileTitle = document.createElement("div");
@@ -203,7 +202,7 @@ let generateProfile = () => {
 };
 
 // Generate search panel
-let generateSearchPanel=  () => {
+let generateSearchPanel =  () => {
   let navigation_holder = document.getElementById("search_container");
   let search_holder = document.createElement("div");
   let search = document.createElement("input");
@@ -214,7 +213,7 @@ let generateSearchPanel=  () => {
   search.id = "search-field";
   search.setAttribute("placeholder", "Search by rink, team or city..");
   search.addEventListener("input", (e) => {
-    gameFilters.searchString = e.target.value;
+    searchFilters.searchString = e.target.value;
     renderGames();
   });
 
@@ -226,7 +225,7 @@ let generateSearchPanel=  () => {
   }
 
   dropDownSearch.addEventListener("change", (e) => {
-    gameFilters.seasonFilter = e.target.value;
+    searchFilters.seasonFilter = e.target.value;
     renderGames();
   });
 
@@ -256,14 +255,14 @@ let gameBox = () => {
 
 // Filter games by search filters.
 let filterGames = () => {
-  let seasonGames = games.filter((game) => game.season.includes(gameFilters.seasonFilter));
+  let seasonGames = games.filter((game) => game.season.includes(searchFilters.seasonFilter));
 
   return (filteredGames = seasonGames.filter((game) => {
     let city = game.location.city.toLowerCase();
     let rink = game.location.rink.toLowerCase();
     let home_team = game.home.toLowerCase();
     let visitor_team = game.visitor.toLowerCase();
-    let search = gameFilters.searchString.toLowerCase();
+    let search = searchFilters.searchString.toLowerCase();
   return (rink.includes(search) || city.includes(search) || home_team.includes(search) || visitor_team.includes(search));
   }));
 };
@@ -335,7 +334,7 @@ let renderGames = () => {
   }
 
   else {
-    contentPage.innerHTML = `No games found for <span class='search-keyword'>${gameFilters.searchString}</span> keyword`;
+    contentPage.innerHTML = `No games found for <span class='search-keyword'>${searchFilters.searchString}</span> keyword`;
     contentPage.classList.add('search-notfound');
     gamesFoundBox.textContent = `no games found`;
     seasonStatPanel.style.display = 'none';  
