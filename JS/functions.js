@@ -315,8 +315,8 @@ let renderGames = () => {
 
   header.appendChild(dateHeader);
   header.appendChild(gameheader);
-  gameheader.appendChild(scoreHeader);
   gameheader.appendChild(teamheader);
+  gameheader.appendChild(scoreHeader);
   header.appendChild(shotHeader);
   header.appendChild(gaaHeader);
   header.appendChild(saaHeader);
