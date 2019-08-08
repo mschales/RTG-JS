@@ -1,4 +1,4 @@
-7// Profile
+// Profile
 let profile = {
   info: {
     'name':'M. Schales',
