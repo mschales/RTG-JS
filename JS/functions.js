@@ -75,7 +75,7 @@ let generateSeasonStats = (getGames) => {
     return shots;
   };
 
-  let seasonGAA = ((getGoals() * 60) / (games.length * 60)).toFixed(2);
+  let seasonGAA = ((getGoals() * 50) / (getGames.length * 50)).toFixed(2);
   let seasonSP = ((getShots() - getGoals()) / getShots()).toFixed(3);
   let getResults = getGameResults(getGames);
 
